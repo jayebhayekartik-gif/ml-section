@@ -31,4 +31,5 @@ models/*
 *.log
 
 !.gitkeep
+!data/raw/*.csv
 
