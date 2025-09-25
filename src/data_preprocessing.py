@@ -1,0 +1,25 @@
+import pandas as pd
+
+# Load raw CSVs
+pp = pd.read_csv("../data/raw/pp_prices.csv")
+naphtha = pd.read_csv("../data/raw/naphtha_prices.csv")
+propylene = pd.read_csv("../data/raw/propylene_prices.csv")
+freight = pd.read_csv("../data/raw/freight_cost.csv")
+
+# Convert Date to datetime and sort
+for df in [pp, naphtha, propylene, freight]:
+    df['Date'] = pd.to_datetime(df['Date'])
+    df.sort_values('Date', inplace=True)
+    df.reset_index(drop=True, inplace=True)
+
+# Fill missing values using forward fill
+for df in [pp, naphtha, propylene, freight]:
+    df['Price'].fillna(method='ffill', inplace=True)
+
+# Save cleaned files to processed folder
+pp.to_csv("../data/processed/processed_pp_prices_clean.csv", index=False)
+naphtha.to_csv("../data/processed/processed_naphtha_prices_clean.csv", index=False)
+propylene.to_csv("../data/processed/processed_propylene_prices_clean.csv", index=False)
+freight.to_csv("../data/processed/processed_freight_cost_clean.csv", index=False)
+
+print("Data preprocessing complete. Cleaned files saved in 'processed/' folder.")
