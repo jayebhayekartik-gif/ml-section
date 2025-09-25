@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 # Load raw CSVs
 pp = pd.read_csv(r"D:\shantanu\git\ml-section\data\raw\pp_prices.csv")
@@ -12,9 +13,12 @@ for df in [pp, naphtha, propylene, freight]:
     df.sort_values('Date', inplace=True)
     df.reset_index(drop=True, inplace=True)
 
-# Fill missing values using forward fill
+# Fill missing values using forward fill (avoiding FutureWarning)
 for df in [pp, naphtha, propylene, freight]:
-    df['Price'].fillna(method='ffill', inplace=True)
+    df['Price'] = df['Price'].ffill()
+
+# Create processed folder if not exists
+os.makedirs("../data/processed", exist_ok=True)
 
 # Save cleaned files to processed folder
 pp.to_csv("../data/processed/processed_pp_prices_clean.csv", index=False)
