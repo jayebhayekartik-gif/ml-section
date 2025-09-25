@@ -1,10 +1,10 @@
 import pandas as pd
 
 # Load raw CSVs
-pp = pd.read_csv("../data/raw/pp_prices.csv")
-naphtha = pd.read_csv("../data/raw/naphtha_prices.csv")
-propylene = pd.read_csv("../data/raw/propylene_prices.csv")
-freight = pd.read_csv("../data/raw/freight_cost.csv")
+pp = pd.read_csv(r"D:\shantanu\git\ml-section\data\raw\pp_prices.csv")
+naphtha = pd.read_csv(r"D:\shantanu\git\ml-section\data\raw\naphtha_prices.csv")
+propylene = pd.read_csv(r"D:\shantanu\git\ml-section\data\raw\propylene_prices.csv")
+freight = pd.read_csv(r"D:\shantanu\git\ml-section\data\raw\freight_cost.csv")
 
 # Convert Date to datetime and sort
 for df in [pp, naphtha, propylene, freight]:
