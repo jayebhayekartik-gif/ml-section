@@ -32,4 +32,5 @@ models/*
 
 !.gitkeep
 !data/raw/*.csv
+!data/processed/*.csv
 
