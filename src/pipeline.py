@@ -13,13 +13,15 @@ import matplotlib.pyplot as plt
 import joblib
 
 # -----------------------------
-# Add repo root to Python path
+# Add src folder to Python path
 # -----------------------------
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-# Now you can import your modules directly
-from data.loader import load_data
-from data.preprocess import preprocess_data
+# -----------------------------
+# Import modules (updated for renamed folder)
+# -----------------------------
+from data_preprocessing.loader import load_data
+from data_preprocessing.preprocess import preprocess_data
 from features.build_features import build_features
 from models.train import train_xgboost, train_sarimax
 from models.evaluate import evaluate_predictions
