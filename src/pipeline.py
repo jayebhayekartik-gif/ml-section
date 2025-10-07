@@ -1,26 +1,28 @@
 # src/pipeline.py
 """
 Smart Pricing Intelligence Platform - End-to-End Pipeline
-This script ties together:
-1. Data loading
-2. Preprocessing
-3. Feature engineering
-4. Model training (SARIMAX + XGBoost)
-5. Evaluation (MAE, RMSE, MAPE)
-6. Saving models and predictions
+Run directly: python src/pipeline.py
 """
 
+import sys
 import os
-import yaml
 import logging
+import yaml
 import pandas as pd
-from src.data.loader import load_data
-from src.data.preprocess import preprocess_data
-from src.features.build_features import build_features
-from src.models.train import train_xgboost, train_sarimax
-from src.models.evaluate import evaluate_predictions
 import matplotlib.pyplot as plt
 import joblib
+
+# -----------------------------
+# Add repo root to Python path
+# -----------------------------
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Now you can import your modules directly
+from data.loader import load_data
+from data.preprocess import preprocess_data
+from features.build_features import build_features
+from models.train import train_xgboost, train_sarimax
+from models.evaluate import evaluate_predictions
 
 # -----------------------------
 # Logging configuration
