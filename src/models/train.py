@@ -1,14 +1,10 @@
-"""
-Train ML models for Smart Pricing Intelligence Platform
-"""
-
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 import joblib
 import os
 
 def train_linear_regression(
-    data_path='../../data/processed/processed_pp_prices_clean.csv', 
+    data_path='D:/shantanu/git/ml-section/data/processed/processed_pp_prices_clean.csv', 
     model_path='linear_model.pkl'
 ):
     # Load dataset
@@ -18,14 +14,11 @@ def train_linear_regression(
 
     df = pd.read_csv(data_path)
     
-    # Example: using price as target, features can be extended
-    if 'price' not in df.columns or 'feature1' not in df.columns:
-        print("Required columns not found in data")
-        print(f"Available columns: {df.columns.tolist()}")
-        return
+    # Convert Date to numeric feature
+    df['Day'] = pd.to_datetime(df['Date']).dt.dayofyear
 
-    X = df[['feature1']].values
-    y = df['price'].values
+    X = df[['Day']]  # features
+    y = df['Price']  # target
 
     model = LinearRegression()
     model.fit(X, y)
@@ -35,6 +28,7 @@ def train_linear_regression(
 
 if __name__ == "__main__":
     train_linear_regression()
+
 
 
 
