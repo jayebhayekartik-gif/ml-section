@@ -1,0 +1,21 @@
+data:
+  raw_path: "data/processed/processed_pp_prices_clean.csv"
+  processed_path: "data/processed"
+
+features:
+  lag_days: 3
+  rolling_window: 7
+
+models:
+  save_path: "models"
+  xgboost:
+    n_estimators: 500
+    learning_rate: 0.05
+    max_depth: 3
+    random_state: 42
+  sarimax:
+    order: [1, 1, 1]
+    seasonal_order: [0, 0, 0, 0]
+
+reports:
+  plots_path: "reports/plots"
