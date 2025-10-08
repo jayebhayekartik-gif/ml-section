@@ -3,8 +3,10 @@ data:
   processed_path: "data/processed"
 
 features:
-  lag_days: 3
-  rolling_window: 7
+  target_col: "Price"         # optional (case-insensitive)
+  lag_days: [1, 7, 30]
+  rolling_windows: [7, 30]
+  exogenous: []               # e.g. ["some_exog_col"]
 
 models:
   save_path: "models"
