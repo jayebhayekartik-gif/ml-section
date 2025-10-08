@@ -1,5 +1,3 @@
-
-# train.py
 """
 Train ML models for Smart Pricing Intelligence Platform
 """
@@ -9,7 +7,10 @@ from sklearn.linear_model import LinearRegression
 import joblib
 import os
 
-def train_linear_regression(data_path='../../data/processed/pricing_data.csv', model_path='linear_model.pkl'):
+def train_linear_regression(
+    data_path='../../data/processed/processed_pp_prices_clean.csv', 
+    model_path='linear_model.pkl'
+):
     # Load dataset
     if not os.path.exists(data_path):
         print(f"Data file not found: {data_path}")
@@ -20,6 +21,7 @@ def train_linear_regression(data_path='../../data/processed/pricing_data.csv', m
     # Example: using price as target, features can be extended
     if 'price' not in df.columns or 'feature1' not in df.columns:
         print("Required columns not found in data")
+        print(f"Available columns: {df.columns.tolist()}")
         return
 
     X = df[['feature1']].values
@@ -33,5 +35,6 @@ def train_linear_regression(data_path='../../data/processed/pricing_data.csv', m
 
 if __name__ == "__main__":
     train_linear_regression()
+
 
 
