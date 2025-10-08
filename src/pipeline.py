@@ -103,6 +103,13 @@ plt.xlabel("Time")
 plt.ylabel("Price")
 plt.title("Predicted vs Actual Prices")
 plt.legend()
+import os
+
+# Ensure the directory exists before saving the plot
+plot_dir = os.path.join(config["reports"]["plots_path"])
+os.makedirs(plot_dir, exist_ok=True)
+
+plt.savefig(os.path.join(plot_dir, "predicted_vs_actual.png"))
 plt.savefig(os.path.join(config["reports"]["plots_path"], "predicted_vs_actual.png"))
 plt.show()
 
