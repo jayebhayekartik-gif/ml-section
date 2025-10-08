@@ -9,75 +9,47 @@ def build_features(df, feature_config):
       - Lag features
       - Rolling averages
       - Optional exogenous features
-
-    Returns:
-      features (DataFrame), target (Series)
     """
     logging.info("Building features...")
 
-    # Work on a copy to avoid chained-assignment warnings
     df = df.copy()
 
-    # --- column name handling (case-insensitive) ---
     col_map = {c.lower(): c for c in df.columns}
 
-    # Determine target column (config can override)
-    requested_target = feature_config.get("target_col", "price")
-    if requested_target.lower() in col_map:
-        target_col = col_map[requested_target.lower()]
-    elif "price" in col_map:
-        target_col = col_map["price"]
-    else:
-        raise KeyError("Target column 'price' (or config-specified) not found in dataframe columns")
+    target_col = feature_config.get("target_col", "price")
+    target_col = col_map.get(target_col.lower(), list(df.columns)[-1])
+    target = df[target_col].copy()
 
-    # If there's a date column, make sure data is sorted by it
     if "date" in col_map:
         date_col = col_map["date"]
         df[date_col] = pd.to_datetime(df[date_col], errors="coerce")
         df = df.sort_values(date_col).reset_index(drop=True)
 
-    # Prepare target series
-    target = df[target_col].copy()
-
-    # Create features DataFrame aligned with df index
     features = pd.DataFrame(index=df.index)
 
-    # --- Lag features ---
-    lag_days = feature_config.get("lag_days", [1])
-    # accept single int or list
-    if isinstance(lag_days, int):
-        lag_days = [lag_days]
-
-    for lag in lag_days:
+    # Lag features
+    for lag in feature_config.get("lag_days", [1]):
         features[f"lag_{lag}"] = target.shift(lag)
 
-    # --- Rolling mean features ---
-    rolling_windows = feature_config.get("rolling_windows", feature_config.get("rolling_window", [7]))
-    if isinstance(rolling_windows, int):
-        rolling_windows = [rolling_windows]
+    # Rolling mean features
+    for window in feature_config.get("rolling_windows", [7]):
+        features[f"roll_mean_{window}"] = target.rolling(window, min_periods=1).mean()
 
-    for window in rolling_windows:
-        # require window > 0
-        if window > 0:
-            features[f"roll_mean_{window}"] = target.rolling(window=window, min_periods=1).mean()
-
-    # --- Exogenous features (case-insensitive matching) ---
+    # Exogenous features
     for exog in feature_config.get("exogenous", []):
         if exog.lower() in col_map:
             features[exog] = df[col_map[exog.lower()]]
-        else:
-            logging.debug(f"Exogenous feature '{exog}' not found in dataframe; skipping.")
 
-    # --- Clean up NaNs created by shifts/rolling ---
-    # Prefer dropping rows with NaNs (safer for training) after trying to fill
-    # First do a sensible fill for edges, then drop remaining NaNs
-    features = features.fillna(method="bfill").fillna(method="ffill")
-    features = features.dropna(how="any")
+    # Fill missing values softly (no dropping)
+    features = features.bfill().ffill()
 
-    # Align target to the final features' index
-    target = target.loc[features.index]
+    # Keep only rows where target is not NaN
+    valid_mask = target.notna()
+    features = features.loc[valid_mask]
+    target = target.loc[valid_mask]
 
-    logging.info(f"Features built: {features.shape[1]} columns, {features.shape[0]} rows")
+    logging.info(f"✅ Features built: {features.shape[1]} columns, {features.shape[0]} rows")
+    if features.shape[0] == 0:
+        logging.warning("⚠️ Warning: No rows left after feature engineering. Check lag/rolling window sizes.")
     return features, target
-
 
